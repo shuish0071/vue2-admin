@@ -2,7 +2,10 @@ import Vue from "vue";
 import Router from "vue-router";
 
 Vue.use(Router);
-
+const originalPush = Router.prototype.push;
+Router.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err);
+};
 // 引用布局组件,index.vue 为默认读取，可以不写，其他vue文件则需要写文件名称
 import Layout from "@/views/Layout";
 
