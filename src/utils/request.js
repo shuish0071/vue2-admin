@@ -14,8 +14,8 @@ service.interceptors.request.use(
   function(config) {
     // 在发送请求之前做些什么
     // 后台需要在请求头添加参数，如token、userId
-    console.log(getToken());
-    console.log(getUsername());
+    // console.log(getToken());
+    // console.log(getUsername());
     // Token作者写错了，哎
     config.headers["Tokey"] = getToken();
     config.headers["UserName"] = getUsername();

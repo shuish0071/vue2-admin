@@ -1,59 +1,70 @@
 <template>
   <div id="category">
-    <el-button type="danger">添加一级分类</el-button>
+    <el-button type="danger" @click="addFirst">添加一级分类</el-button>
     <hr class="hr-e9e9e9" />
     <div>
       <el-row :gutter="30">
         <el-col :span="8">
           <div class="category-wrap">
-            <div class="category">
+            <div
+              class="category"
+              v-for="firstItem in category.item"
+              :key="firstItem.id"
+            >
               <h4>
-                <svg-icon icon-class="plus"></svg-icon>新闻
+                <svg-icon icon-class="plus"></svg-icon>
+                {{ firstItem.category_name }} - {{ firstItem.id }}
                 <div class="button-group">
                   <el-button size="mini" type="danger" round>编辑</el-button>
                   <el-button size="mini" type="success" round
                     >添加子级</el-button
                   >
-                  <el-button size="mini" round>删除</el-button>
+                  <el-button
+                    size="mini"
+                    round
+                    @click="deleteCategoryConfirm(firstItem.id)"
+                    >删除</el-button
+                  >
                 </div>
               </h4>
-              <ul>
-                <li>
-                  国内
+              <ul v-if="firstItem.children">
+                <li
+                  v-for="childrenItem in firstItem.children"
+                  :key="childrenItem.id"
+                >
+                  {{ childrenItem.category_name }}
                   <div class="button-group">
                     <el-button size="mini" type="danger" round>编辑</el-button>
                     <el-button size="mini" round>删除</el-button>
                   </div>
                 </li>
-                <li>国内</li>
-                <li>国内</li>
-                <li>国内</li>
-                <li>国内</li>
-              </ul>
-            </div>
-            <div class="category">
-              <h4><svg-icon icon-class="plus"></svg-icon>新闻</h4>
-              <ul>
-                <li>国内</li>
-                <li>国内</li>
-                <li>国内</li>
-                <li>国内</li>
-                <li>国内</li>
               </ul>
             </div>
           </div>
         </el-col>
         <el-col :span="16">
           <h4 class="menu-title">一级分类编辑</h4>
-          <el-form label-width="142px" class="form-wrap">
-            <el-form-item label="一级分类名称：">
-              <el-input v-model="form.categoryName"></el-input>
+          <el-form label-width="142px" class="form-wrap" ref="categoryForm">
+            <el-form-item label="一级分类名称：" v-if="category_first_input">
+              <el-input
+                v-model="form.categoryName"
+                :disabled="category_first_disabled"
+              ></el-input>
             </el-form-item>
-            <el-form-item label="二级分类名称：">
-              <el-input v-model="form.secCategoryName"></el-input>
+            <el-form-item label="二级分类名称：" v-if="category_children_input">
+              <el-input
+                v-model="form.secCategoryName"
+                :disabled="category_children_disabled"
+              ></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="danger" @click="submit">确定</el-button>
+              <el-button
+                type="danger"
+                @click="submit"
+                :loading="submit_button_loading"
+                :disabled="submit_button_disabled"
+                >确定</el-button
+              >
             </el-form-item>
           </el-form>
         </el-col>
@@ -63,8 +74,9 @@
 >
 
 <script>
-import { reactive } from "@vue/composition-api";
-import { AddFirstCategory } from "@/api/news";
+import { reactive, ref, onMounted } from "@vue/composition-api";
+import { AddFirstCategory, GetCategory, DeleteCategory } from "@/api/news";
+import { global } from "@/utils/global";
 
 export default {
   name: "category",
@@ -73,18 +85,88 @@ export default {
       categoryName: "",
       secCategoryName: ""
     });
+
+    const { confirm } = global();
+
+    const category = reactive({ item: [] });
+
+    const submit_button_loading = ref(false);
+    const category_first_input = ref(true);
+    const category_children_input = ref(true);
+    const category_first_disabled = ref(true);
+    const category_children_disabled = ref(true);
+    const submit_button_disabled = ref(true);
     const submit = () => {
+      if (!form.categoryName) {
+        root.$message.error("分类名称不能为空");
+        return false;
+      }
+      // 按钮加载状态
+      submit_button_loading.value = true;
       AddFirstCategory({ categoryName: form.categoryName })
         .then(response => {
-          root.$message(response.message);
+          if (response.data.resCode === 0) {
+            root.$message.success(response.data.message);
+            // 如果返回结果和列表需要的数据类型一致，则可以进行优化
+            // 直接使用新增返回的数据加入到列表中即可，不用再次调用获取数据接口进行页面数据渲染
+            category.item.unshift(response.data.data);
+            // getCategory();
+          }
         })
         .catch(error => {
           console.log(error);
         });
+      submit_button_loading.value = false;
+      form.categoryName = "";
+      form.secCategoryName = "";
     };
+    const addFirst = () => {
+      category_first_input.value = true;
+      category_children_input.value = false;
+      category_first_disabled.value = false;
+      submit_button_disabled.value = false;
+    };
+    const getCategory = () => {
+      GetCategory({})
+        .then(response => {
+          category.item = response.data.data.data;
+        })
+        .catch();
+    };
+    const deleteCategoryConfirm = categoryID => {
+      confirm({
+        content: "确认删除当前一级分类，是否继续？",
+        tip: "警告",
+        id: categoryID,
+        fn: deleteCategory
+      });
+    };
+    const deleteCategory = categoryID => {
+      DeleteCategory({ categoryId: categoryID })
+        .then(response => {
+          // 操作数组 splice
+          root.$message.success(response.data.message);
+          getCategory();
+        })
+        .catch();
+    };
+    // 挂载完成时执行，页面dom元素完成时，实例完成时
+    onMounted(() => {
+      getCategory();
+    });
     return {
       form,
-      submit
+      category,
+      submit_button_loading,
+      category_first_input,
+      category_children_input,
+      category_first_disabled,
+      category_children_disabled,
+      submit_button_disabled,
+      submit,
+      addFirst,
+      deleteCategoryConfirm,
+      deleteCategory
     };
   }
 };
@@ -117,7 +199,7 @@ export default {
     content: "";
     position: absolute;
     left: 20px;
-    top: -17px;
+    top: -2px;
     bottom: 0;
     width: 32px;
     border-left: 1px dotted #000000;
