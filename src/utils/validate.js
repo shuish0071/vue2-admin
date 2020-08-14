@@ -1,4 +1,5 @@
 // 过滤特殊字符
+
 export function stripscript(value) {
   var pattern = new RegExp(
     "[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）&;—|{}【】‘；：”“'。，、？]"

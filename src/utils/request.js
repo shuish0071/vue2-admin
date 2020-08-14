@@ -1,6 +1,7 @@
 import axios from "axios";
 // vue文件可以使用全局引用，js文件需要单独引用element-ui
 import { Message } from "element-ui";
+import { getToken, getUsername } from "@/utils/app";
 
 // 创建axios，赋给变量service
 const BASEURL = process.env.NODE_ENV === "production" ? "" : "/devApi";
@@ -13,8 +14,11 @@ service.interceptors.request.use(
   function(config) {
     // 在发送请求之前做些什么
     // 后台需要在请求头添加参数，如token、userId
-    // config.headers["token"] = "123456789";
-    // config.headers["userId"] = "233333";
+    console.log(getToken());
+    console.log(getUsername());
+    // Token作者写错了，哎
+    config.headers["Tokey"] = getToken();
+    config.headers["UserName"] = getUsername();
     return config;
   },
   function(error) {
