@@ -1,6 +1,8 @@
 <template>
   <div id="category">
-    <el-button type="danger" @click="addFirst">添加一级分类</el-button>
+    <el-button type="danger" @click="addFirst({ type: 'category_first_add' })"
+      >添加一级分类</el-button
+    >
     <hr class="hr-e9e9e9" />
     <div>
       <el-row :gutter="30">
@@ -13,9 +15,20 @@
             >
               <h4>
                 <svg-icon icon-class="plus"></svg-icon>
-                {{ firstItem.category_name }} - {{ firstItem.id }}
+                {{ firstItem.category_name }}
                 <div class="button-group">
-                  <el-button size="mini" type="danger" round>编辑</el-button>
+                  <el-button
+                    size="mini"
+                    type="danger"
+                    @click="
+                      editCategory({
+                        data: firstItem,
+                        type: 'category_first_edit'
+                      })
+                    "
+                    round
+                    >编辑</el-button
+                  >
                   <el-button size="mini" type="success" round
                     >添加子级</el-button
                   >
@@ -34,7 +47,18 @@
                 >
                   {{ childrenItem.category_name }}
                   <div class="button-group">
-                    <el-button size="mini" type="danger" round>编辑</el-button>
+                    <el-button
+                      size="mini"
+                      type="danger"
+                      @click="
+                        editCategory({
+                          data: firstItem,
+                          type: 'category_first_edit'
+                        })
+                      "
+                      round
+                      >编辑</el-button
+                    >
                     <el-button size="mini" round>删除</el-button>
                   </div>
                 </li>
@@ -74,9 +98,10 @@
 >
 
 <script>
-import { reactive, ref, onMounted } from "@vue/composition-api";
-import { AddFirstCategory, GetCategory, DeleteCategory } from "@/api/news";
+import { reactive, ref, onMounted, watch } from "@vue/composition-api";
+import { AddFirstCategory, DeleteCategory, EditCategory } from "@/api/news";
 import { global } from "@/utils/global";
+import { common } from "@/api/common";
 
 export default {
   name: "category",
@@ -87,9 +112,11 @@ export default {
     });
 
     const { confirm } = global();
+    const { getInfoCategory, categoryItem } = common();
 
-    const category = reactive({ item: [] });
+    const category = reactive({ item: [], current: [] });
 
+    const submit_buttons_type = ref("");
     const submit_button_loading = ref(false);
     const category_first_input = ref(true);
     const category_children_input = ref(true);
@@ -97,6 +124,14 @@ export default {
     const category_children_disabled = ref(true);
     const submit_button_disabled = ref(true);
     const submit = () => {
+      if (submit_buttons_type.value === "category_first_add") {
+        addFirstCategory();
+      }
+      if (submit_buttons_type.value === "category_first_edit") {
+        editFirstCategory();
+      }
+    };
+    const addFirstCategory = () => {
       if (!form.categoryName) {
         root.$message.error("分类名称不能为空");
         return false;
@@ -113,25 +148,17 @@ export default {
             // getCategory();
           }
         })
-        .catch(error => {
-          console.log(error);
-        });
+        .catch();
       submit_button_loading.value = false;
       form.categoryName = "";
       form.secCategoryName = "";
     };
-    const addFirst = () => {
+    const addFirst = params => {
+      submit_buttons_type.value = params.type;
       category_first_input.value = true;
       category_children_input.value = false;
       category_first_disabled.value = false;
       submit_button_disabled.value = false;
-    };
-    const getCategory = () => {
-      GetCategory({})
-        .then(response => {
-          category.item = response.data.data.data;
-        })
-        .catch();
     };
     const deleteCategoryConfirm = categoryID => {
       confirm({
@@ -146,14 +173,50 @@ export default {
         .then(response => {
           // 操作数组 splice
           root.$message.success(response.data.message);
-          getCategory();
+          category.item = category.item.filter(item => item.id !== categoryID);
+        })
+        .catch();
+    };
+    const editCategory = params => {
+      submit_buttons_type.value = params.type;
+      category_children_input.value = false;
+      category_first_disabled.value = false;
+      submit_button_disabled.value = false;
+      // 一级名称输入，还原名称
+      form.categoryName = params.data.category_name;
+      // 储存当前数据对象
+      category.current = params.data;
+    };
+    const editFirstCategory = () => {
+      if (category.current.length === 0) {
+        root.$message.error("未选择分类");
+        return false;
+      }
+      let requestData = {
+        // 原标题的id，更新后的标题名称
+        id: category.current.id,
+        categoryName: form.categoryName
+      };
+      EditCategory(requestData)
+        .then(response => {
+          root.$message.success(response.data.message);
+          category.current.category_name = response.data.data.data.categoryName;
+          // 清空输入框名称、选中的一级标题
+          form.categoryName = "";
+          category.current = [];
         })
         .catch();
     };
     // 挂载完成时执行，页面dom元素完成时，实例完成时
     onMounted(() => {
-      getCategory();
+      getInfoCategory();
     });
+    watch(
+      () => categoryItem.item,
+      value => {
+        category.item = value;
+      }
+    );
     return {
       form,
       category,
@@ -164,9 +227,11 @@ export default {
       category_children_disabled,
       submit_button_disabled,
       submit,
+      addFirstCategory,
       addFirst,
       deleteCategoryConfirm,
-      deleteCategory
+      deleteCategory,
+      editCategory
     };
   }
 };
