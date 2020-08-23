@@ -41,7 +41,7 @@ const actions = {
       // 接口
       Login(requestData)
         .then(response => {
-          console.log(response.data.data);
+          // console.log(response.data.data);
           let data = response.data.data;
           // 需要存储 token username，vuex存一份，cookie存一份
           // 普通方式
@@ -52,8 +52,8 @@ const actions = {
           commit("SET_USERNAME", data.username);
           setToken(data.token);
           setUsername(data.username);
-          console.log(data.token);
-          console.log(data.username);
+          // console.log(data.token);
+          // console.log(data.username);
           resolve(response);
         })
         .catch(error => {

@@ -9,6 +9,13 @@ export function GetSms(data) {
 }
 
 // 获取用户角色
+export function getUserRole(data = {}) {
+  return service.request({
+    method: "post",
+    url: "/userRole/",
+    data // 相当于 data: data ,由于参数名与变量名一致，可以只写data即可，es6写法
+  });
+}
 
 // 登录
 export function Login(data) {

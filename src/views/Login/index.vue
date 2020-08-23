@@ -268,7 +268,6 @@ export default {
         code: ruleForm.code,
         module: "login"
       };
-      console.log(requestData.password);
       context.root.$store.dispatch("app/login", requestData).then(() => {
         console.log("登录成功");
         context.root.$router.push({ name: "Console" });
@@ -285,7 +284,6 @@ export default {
       // 注册接口
       Register(requestData)
         .then(response => {
-          console.log(response);
           let data = response.data;
           context.root.$message({
             message: data.message,
