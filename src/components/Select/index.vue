@@ -34,10 +34,18 @@ export default {
 
     // 初始下来选择
     let initOption = () => {
+      // 数据校验
+      if (props.config.length === 0) {
+        console.log("config参数为空，无法显示下拉菜单");
+        return false;
+      }
+
       let optionArr = [];
       props.config.forEach(item => {
-        let arr = data.option.filter(elem => elem.value === item)[0]; // filter匹配成功的是数组，需要取下标第一个
-        optionArr.push(arr);
+        let arr = data.option.filter(elem => elem.value === item); // filter匹配成功的是数组，需要取下标第一个
+        if (arr.length > 0) {
+          optionArr.push(arr[0]);
+        }
       });
       // 初始化赋值
       data.initOption = optionArr;

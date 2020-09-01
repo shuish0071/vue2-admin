@@ -2,21 +2,16 @@ import { getUserRole } from "@/api/login";
 import { defaultRouterMap, asyncRouterMap } from "@/router";
 
 const state = {
-  roles: [],
   allRouters: defaultRouterMap,
   addRouters: []
 };
 
 const getters = {
-  roles: state => state.roles,
   allRouters: state => state.allRouters, // 所有的路由
   addRouters: state => state.addRouters // 匹配的路由
 };
 
 const mutations = {
-  SET_ROLES(state, value) {
-    state.roles = value;
-  },
   SET_ROUTER(state, route) {
     state.addRouters = route;
     state.allRouters = defaultRouterMap.concat(route);
@@ -25,12 +20,11 @@ const mutations = {
 
 const actions = {
   // 获取用户角色
-  getRoles({ commit }) {
+  getRoles() {
     return new Promise(resolve => {
       getUserRole().then(response => {
         let role = response.data.data;
         // 存值store.commit("app/SET_TOKEN", "")，取值store.getters["permission/roles"]
-        commit("SET_ROLES", role);
         // resolve 是then 返回
         resolve(role);
       });

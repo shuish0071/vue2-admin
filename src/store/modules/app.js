@@ -8,15 +8,20 @@ import {
 } from "@/utils/app";
 
 const state = {
+  roles: [],
   isCollapse: JSON.parse(sessionStorage.getItem("isCollapse")) || false,
   token: "",
   username: getUsername() || ""
 };
 const getters = {
+  roles: state => state.roles,
   isCollapse: state => state.isCollapse
   // isCollapse: cookie.get("isCollapse") || false
 };
 const mutations = {
+  SET_ROLES(state, value) {
+    state.roles = value;
+  },
   // context.root.$store.commit("SET_COLLAPSE") 可以改变 state.isCollapse 值
   SET_COLLAPSE(state) {
     state.isCollapse = !state.isCollapse;
