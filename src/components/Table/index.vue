@@ -50,6 +50,7 @@ export default {
       tableConfig: {
         selection: true,
         recordCheckbox: false,
+        requestUrl: "",
         tHead: []
       },
       tableData: [
@@ -69,12 +70,16 @@ export default {
         }
       ]
     });
+    let loadData = () => {
+      console.log(data.tableConfig.requestUrl);
+    };
     // 初始化table 配置项
     const initTableConfig = () => {
       let configData = props.config;
+      let keys = Object.keys(data.tableConfig); // 以数组形式返回字典中的key
       for (let key in configData) {
         // 检查配置项是否存在，配置项写错则不显示，或者显示默认设置
-        if (data.tableConfig[key]) {
+        if (keys.includes(key)) {
           data.tableConfig[key] = configData[key];
         }
       }
@@ -83,7 +88,7 @@ export default {
       initTableConfig();
     });
     onMounted(() => {});
-    return { data };
+    return { data, loadData };
   }
 };
 </script>

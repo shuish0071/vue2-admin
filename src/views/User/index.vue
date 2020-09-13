@@ -90,7 +90,7 @@ export default {
           }
         ],
         // 请求接口URL
-        requestUrl: "asdasdasd"
+        requestUrl: "/news/getList/"
       }
     });
     const operation = params => {
