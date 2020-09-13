@@ -30,7 +30,24 @@
       </el-col>
     </el-row>
     <div class="black-space-30"></div>
-    <TableVue :config="data.configTable"></TableVue>
+    <TableVue :config="data.configTable">
+      <template v-slot:status="slotData">
+        <el-switch
+          v-model="slotData.data.name"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+        >
+        </el-switch>
+      </template>
+      <template v-slot:operation="slotData">
+        <el-button type="danger" size="mini" @click="operation(slotData.data)"
+          >删除</el-button
+        >
+        <el-button type="success" size="mini" @click="operation(slotData.data)"
+          >编辑</el-button
+        >
+      </template>
+    </TableVue>
   </div>
 </template>
 
@@ -59,12 +76,29 @@ export default {
           { label: "真实姓名", filed: "name", width: 120 },
           { label: "手机号", filed: "phone" },
           { label: "地址", filed: "address" },
-          { label: "角色", filed: "role", width: 180 }
-        ]
+          { label: "角色", filed: "role", width: 180 },
+          {
+            label: "禁启用状态",
+            filed: "status",
+            columnType: "slot",
+            slotName: "status"
+          },
+          {
+            label: "操作",
+            columnType: "slot",
+            slotName: "operation"
+          }
+        ],
+        // 请求接口URL
+        requestUrl: "asdasdasd"
       }
     });
+    const operation = params => {
+      console.log(params);
+    };
     return {
-      data
+      data,
+      operation
     };
   }
 };

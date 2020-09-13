@@ -7,15 +7,31 @@
       width="55"
     >
     </el-table-column>
-    <!--      文本数据渲染-->
-    <el-table-column
-      v-for="item in data.tableConfig.tHead"
-      :key="item.field"
-      :prop="item.filed"
-      :label="item.label"
-      :width="item.width"
-    >
-    </el-table-column>
+
+    <!--    为了将v-for 和v-if区分开，使用template标签进行隔离-->
+    <template v-for="item in data.tableConfig.tHead">
+      <!--      v-slot-->
+      <el-table-column
+        :key="item.filed"
+        :prop="item.filed"
+        :label="item.label"
+        :width="item.width"
+        v-if="item.columnType === 'slot'"
+      >
+        <template slot-scope="scope">
+          <slot :name="item.slotName" :data="scope.row"></slot>
+        </template>
+      </el-table-column>
+      <!--      文本数据渲染-->
+      <el-table-column
+        :key="item.field"
+        :prop="item.filed"
+        :label="item.label"
+        :width="item.width"
+        v-else
+      >
+      </el-table-column>
+    </template>
   </el-table>
 </template>
 
