@@ -29,6 +29,8 @@
         <el-button type="danger" class="pull-right"> 添加用户 </el-button>
       </el-col>
     </el-row>
+    <div class="black-space-30"></div>
+    <TableVue :config="data.configTable"></TableVue>
   </div>
 </template>
 
@@ -36,12 +38,30 @@
 import { reactive } from "@vue/composition-api";
 // selcet 组件
 import SelectVue from "@/components/Select";
+import TableVue from "@/components/Table";
 export default {
   name: "userIndex",
-  components: { SelectVue },
+  components: { SelectVue, TableVue },
   setup() {
     const data = reactive({
-      configOption: ["name", "phone", "email"]
+      configOption: {
+        init: ["name", "phone"]
+      },
+      // table组件配置参数
+      configTable: {
+        // 多选框
+        selection: true,
+        // 翻页记录checkbox,
+        recordCheckbox: true,
+        // 表头
+        tHead: [
+          { label: "邮箱/用户名", filed: "email", width: 200 },
+          { label: "真实姓名", filed: "name", width: 120 },
+          { label: "手机号", filed: "phone" },
+          { label: "地址", filed: "address" },
+          { label: "角色", filed: "role", width: 180 }
+        ]
+      }
     });
     return {
       data

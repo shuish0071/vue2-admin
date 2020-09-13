@@ -25,7 +25,7 @@ export function validate_Password(value) {
 
 // 验证码
 export function validate_code(value) {
-  let reg = /^[a-z0-9]{6}$/;
+  let reg = /^[0-9a-z]{6}$/;
   return !reg.test(value);
 }
 

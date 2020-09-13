@@ -23,6 +23,7 @@ router.beforeEach((to, from, next) => {
       if (store.getters["app/roles"].length === 0) {
         store.dispatch("permission/getRoles").then(response => {
           store.commit("app/SET_ROLES", response);
+          // 存储角色
           store.dispatch("permission/createRouter", response).then(() => {
             // 先更新所有路由，否则导航栏监听不到路由的信息，导致没有对应菜单
             router.options.routes = store.getters["permission/allRouters"];

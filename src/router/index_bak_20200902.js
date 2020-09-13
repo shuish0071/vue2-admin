@@ -60,7 +60,6 @@ export const asyncRouterMap = [
     path: "/info",
     name: "Info",
     meta: {
-      role: ["admin"],
       name: "信息管理",
       system: "infoSystem",
       icon: "info"
@@ -70,13 +69,13 @@ export const asyncRouterMap = [
       {
         path: "/infoIndex",
         name: "InfoIndex",
-        meta: { role: ["sale"], name: "信息列表" },
+        meta: { name: "信息列表" },
         component: () => import("../views/Info/index")
       },
       {
         path: "/infoCategory",
         name: "InfoCategory",
-        meta: { role: ["sale"], name: "信息分类" },
+        meta: { name: "信息分类" },
         component: () => import("../views/Info/category")
       }
     ]
@@ -86,7 +85,6 @@ export const asyncRouterMap = [
     path: "/user",
     name: "User",
     meta: {
-      role: ["admin"],
       name: "用户管理",
       system: "userSystem",
       icon: "user"
@@ -96,7 +94,7 @@ export const asyncRouterMap = [
       {
         path: "/userIndex",
         name: "UserIndex",
-        meta: { role: ["sale"], name: "用户列表" },
+        meta: { name: "用户列表" },
         component: () => import("../views/User/index")
       }
     ]

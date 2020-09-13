@@ -16,8 +16,8 @@ export default {
   name: "index",
   props: {
     config: {
-      type: Array,
-      default: () => []
+      type: Object,
+      default: () => {}
     }
   },
   setup(props) {
@@ -28,25 +28,32 @@ export default {
         { value: "name", label: "姓名" },
         { value: "phone", label: "手机号" },
         { value: "email", label: "邮箱" },
-        { value: "id", label: "ID" }
+        { value: "id", label: "ID" },
+        { value: "title", label: "标题" }
       ]
     });
 
     // 初始下来选择
     let initOption = () => {
+      let initData = props.config.init;
+      let optionArr = [];
       // 数据校验
-      if (props.config.length === 0) {
-        console.log("config参数为空，无法显示下拉菜单");
+      if (initData.length === 0) {
+        console.log("config参数为空，无法显示下拉菜单！");
         return false;
       }
 
-      let optionArr = [];
-      props.config.forEach(item => {
+      initData.forEach(item => {
         let arr = data.option.filter(elem => elem.value === item); // filter匹配成功的是数组，需要取下标第一个
         if (arr.length > 0) {
           optionArr.push(arr[0]);
         }
       });
+      // 数据校验
+      if (optionArr.length === 0) {
+        console.log("匹配的数据为空！");
+        return false;
+      }
       // 初始化赋值
       data.initOption = optionArr;
       // 初始化搜索类型

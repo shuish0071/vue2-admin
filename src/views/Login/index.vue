@@ -62,12 +62,7 @@
           <label for="code">验证码</label>
           <el-row :gutter="10">
             <el-col :span="15">
-              <el-input
-                id="code"
-                v-model.number="ruleForm.code"
-                minlength="6"
-                maxlength="6"
-              ></el-input>
+              <el-input id="code" v-model.number="ruleForm.code"></el-input>
             </el-col>
             <el-col :span="9">
               <el-button

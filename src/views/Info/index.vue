@@ -37,14 +37,7 @@
         </el-col>
         <el-col :span="3">
           <el-form-item label="关键字：">
-            <el-select v-model="search_key" style="width: 80px">
-              <el-option
-                v-for="item in search_option"
-                :key="item.value"
-                :value="item.value"
-                :label="item.label"
-              ></el-option>
-            </el-select>
+            <SelectVue :config="data.configOption" />
           </el-form-item>
         </el-col>
         <el-col :span="4">
@@ -108,12 +101,18 @@
 import { reactive, ref, onMounted } from "@vue/composition-api";
 import DialogInfo from "./dialog/info";
 import { global } from "@/utils/global";
+import SelectVue from "@/components/Select";
 
 export default {
   name: "infoIndex",
-  components: { DialogInfo },
+  components: { DialogInfo, SelectVue },
   setup(props, { root }) {
     const { confirm } = global();
+    const data = reactive({
+      configOption: {
+        init: ["id", "title"]
+      }
+    });
     const dialog_info = ref(false);
     const search_key = ref("title");
     const category_value = ref("");
@@ -198,6 +197,7 @@ export default {
       search_key,
       search_keyWork,
       // reactive
+      data,
       options,
       search_option,
       table_data,

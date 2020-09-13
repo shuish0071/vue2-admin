@@ -1,6 +1,13 @@
 import { getUserRole } from "@/api/login";
 import { defaultRouterMap, asyncRouterMap } from "@/router";
 
+// function hasPermission(role, router) {
+//   if (router.meta && router.meta.role) {
+//     //
+//     role.some(item => router.meta.role.indexOf(item) >= 0);
+//   }
+// }
+
 const state = {
   allRouters: defaultRouterMap,
   addRouters: []
@@ -36,6 +43,12 @@ const actions = {
       let role = data.role;
       // 超管的状态
       let addRouters = [];
+      // addRouters = asyncRouterMap.filter(item => {
+      //   if (hasPermission(role, item)) {
+      //     return item;
+      //   }
+      // });
+
       if (role.includes("admin")) {
         addRouters = asyncRouterMap;
       } else {
@@ -47,6 +60,7 @@ const actions = {
           }
         });
       }
+
       // 更新路由
       commit("SET_ROUTER", addRouters);
       resolve();
