@@ -10,8 +10,6 @@ router.beforeEach((to, from, next) => {
   if (getToken()) {
     // 第二次路由跳转到login，视为logout，cookie和vuex都删除token、username
     if (to.path === "/login") {
-      console.log(store.state.app.username);
-      console.log(store.state.app.token);
       removeToken();
       removeUsername();
       store.commit("app/SET_TOKEN", "");

@@ -237,9 +237,7 @@ export default {
           // 调用定时器，倒计时60秒
           countDown(60);
         })
-        .catch(error => {
-          console.log(error);
-        });
+        .catch();
     };
 
     // 提交表单
@@ -264,7 +262,6 @@ export default {
         module: "login"
       };
       context.root.$store.dispatch("app/login", requestData).then(() => {
-        console.log("登录成功");
         context.root.$router.push({ name: "Console" });
       });
     };
