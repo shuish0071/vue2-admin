@@ -1,24 +1,29 @@
-# hrbzyc
+### 1 vue
 
-## Project setup
-```
-npm install
-```
+vue 版本为2.x，`element ui`也是适配 vue 2.x，对于3.x 会有不适配。
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+### 2 需要修改的地方
 
-### Compiles and minifies for production
-```
-npm run build
+#### 2.1 src/main.js
+
+打开路由规则，存储token，无`token`跳转到`login`
+
+```js
+import "@/router/permit";
 ```
 
-### Lints and fixes files
-```
-npm run lint
+#### 2.2 src/router/index.js
+
+将`index`改为`login`，这样默认跳转到`login`页面。
+
+```js
+  {
+    path: "/",
+    redirect: "login",
+    hidden: true,
+    meta: { name: "主页" }
+  },
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+
+

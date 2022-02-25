@@ -1,0 +1,13 @@
+@import "config";
+@import "elementui";
+
+.pull-left { float: left; }
+.pull-right { float: right; }
+body {
+  margin: 0;
+  font-family: "Microsoft YaHei", serif;
+  font-size: 14px;
+}
+.black-space-30 {
+  height: 30px;
+}
